@@ -1,0 +1,32 @@
+{
+  "name": "ai-study-hub",
+  "version": "1.0.0",
+  "description": "AI Study Assistant - Fully Animated Web Application",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "npx serve . -l 3000",
+    "dev": "npx serve . -l 3000",
+    "desktop": "electron electron-main.js",
+    "app": "electron electron-main.js",
+    "electron": "electron electron-main.js",
+    "mobile:sync": "node bundle-mobile.js && cap sync",
+    "mobile:android": "node bundle-mobile.js && cap add android && cap sync && cap open android",
+    "bundle:mobile": "node bundle-mobile.js"
+  },
+  "keywords": [
+    "ai",
+    "study",
+    "education",
+    "animated",
+    "interactive"
+  ],
+  "author": "Antigravity",
+  "license": "MIT",
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
+    "electron": "^44.7.0"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.5.3"
+  }
+}

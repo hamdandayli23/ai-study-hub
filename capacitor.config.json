@@ -1,0 +1,14 @@
+{
+  "appId": "com.aistudyhub.app",
+  "appName": "AI Study Hub",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "backgroundColor": "#090d16"
+  }
+}

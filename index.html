@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <title>AI Study Assistant · Learn with clarity</title>
+  <meta name="description" content="AI Study Assistant — upload, understand, practice, learn. Fully animated interactive study workspace with summaries, quizzes, and grounded AI tutor." />
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+    <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="theme-color" content="#090d16" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AI Study Hub" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-base text-main">
+
+  <!-- Ambient Animated Particle & Constellation Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Aurora Mesh Glows -->
+  <div class="aurora-mesh" aria-hidden="true">
+    <div class="aurora-blob aurora-1"></div>
+    <div class="aurora-blob aurora-2"></div>
+    <div class="aurora-blob aurora-3"></div>
+  </div>
+
+  <!-- Ambient Cursor Glow Spotlight -->
+  <div id="cursor-glow" aria-hidden="true"></div>
+
+  <!-- Confetti Celebration Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- STICKY FLOATING NAVBAR -->
+  <header class="navbar-wrapper">
+    <nav class="navbar glass-card">
+      <a href="javascript:void(0)" onclick="showLandingView()" class="brand-link" id="nav-brand" aria-label="AI Study Assistant Home">
+        <span class="brand-icon-box">
+          <svg class="sparkle-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>
+          </svg>
+          <span class="icon-pulse-ring"></span>
+        </span>
+        <div class="brand-text-col">
+          <span class="brand-title">AI Study Assistant</span>
+          <span class="brand-badge-tiny">PRO V2.4</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <div class="nav-links" id="nav-links-container">
+        <a href="#features" class="nav-item" onclick="showLandingView('features')">Features</a>
+        <a href="#how-it-works" class="nav-item" onclick="showLandingView('how-it-works')">How it works</a>
+        <a href="javascript:void(0)" class="nav-item nav-item-highlight" onclick="handleNavWorkspaceClick()">
+          <span class="live-dot"></span> Live Workspace
+        </a>
+      </div>
+
+      <!-- Nav CTA & Audio Button -->
+      <div class="nav-actions">
+        <!-- Install App Button (Laptop & Mobile) -->
+        <button id="pwa-install-btn" class="btn-install-app" onclick="triggerPwaInstall()" title="Install AI Study Hub as Laptop or Mobile App" aria-label="Install App">
+          <svg class="install-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span class="install-btn-text">Install App</span>
+          <span class="install-pulse-dot"></span>
+        </button>
+        <!-- Interactive Sound Effects Toggle -->
+        <button id="sound-toggle" class="btn-icon-glass" title="Toggle Sound Micro-interactions (Click sounds & chimes)" aria-label="Sound Toggle">
+          <span class="sound-wave-icon">
+            <span class="wave-bar bar-1"></span>
+            <span class="wave-bar bar-2"></span>
+            <span class="wave-bar bar-3"></span>
+          </span>
+          <span class="sound-label">SFX</span>
+        </button>
+
+        <!-- Unauthenticated Controls -->
+        <div id="nav-unauth-group" class="nav-auth-buttons">
+          <button class="btn-secondary-glow btn-sm hidden-mobile" id="nav-login-btn" onclick="openAuthPage('login')">
+            Log in
+          </button>
+
+          <button class="btn-primary-glow btn-sm" id="nav-cta-btn" onclick="openAuthPage('signup')">
+            <span>Get started free</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Authenticated Controls (Shown after Login/Signup) -->
+        <div id="nav-auth-group" class="nav-auth-buttons" style="display: none;">
+          <div class="user-pill glass-card">
+            <div class="user-avatar-mini" id="nav-user-avatar">A</div>
+            <div class="user-nav-details">
+              <span class="user-nav-name" id="nav-user-name">Alex Morgan</span>
+              <span class="user-nav-badge">Student Pro</span>
+            </div>
+          </div>
+          <button class="btn-icon-subtle" onclick="handleLogout()" title="Sign out of workspace">
+            <span>Sign out</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="page-container">
+
+    <!-- ============================================== -->
+    <!-- VIEW 1: PUBLIC LANDING PAGE (HERO, FEATURES, HOW IT WORKS) -->
+    <!-- ============================================== -->
+    <div id="landing-view-container">
+
+      <!-- SECTION 1: HERO SECTION WITH 3D INTERACTIVE CARD -->
+      <section id="hero" class="hero-section">
+        <div class="hero-grid">
+          
+          <!-- Hero Left Column: Copy & CTAs -->
+          <div class="hero-content">
+            <!-- Animated Eyebrow -->
+            <div class="hero-eyebrow-badge fade-in-up" style="--delay: 0.1s">
+              <span class="pulse-beacon"></span>
+              <span class="eyebrow-text">YOUR FOCUSED STUDY WORKSPACE</span>
+            </div>
+
+            <!-- Main Dynamic Heading -->
+            <h1 class="hero-title fade-in-up" style="--delay: 0.2s">
+              Study smarter.<br />
+              <span class="gradient-text-animated">Understand deeper.</span>
+            </h1>
+
+            <!-- Hero Subtitle -->
+            <p class="hero-description fade-in-up" style="--delay: 0.3s">
+              Upload your lecture notes, PDFs, or slides. Let AI generate crystal-clear summaries, high-yield exam questions, interactive practice quizzes, and a grounded personal tutor that keeps you focused.
+            </p>
+
+            <!-- Hero Action Buttons -->
+            <div class="hero-buttons fade-in-up" style="--delay: 0.4s">
+              <button class="btn-primary-glow btn-lg hero-cta" id="hero-get-started-btn" onclick="openAuthPage('signup')">
+                <span>Get started free</span>
+                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                </svg>
+              </button>
+              
+              <button class="btn-secondary-glow btn-lg" id="hero-login-btn" onclick="openAuthPage('login')">
+                <span>I already have an account</span>
+              </button>
+
+              <button class="btn-secondary-glow btn-lg" id="hero-upload-trigger-btn" onclick="handleHeroUploadClick()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>Upload Notes</span>
+              </button>
+            </div>
+
+            <!-- Proof Points with Animated Floating Badges -->
+            <div class="hero-proof-row fade-in-up" style="--delay: 0.5s">
+              <div class="proof-pill">
+                <span class="proof-check">✓</span>
+                <span>PDF + TXT Ready</span>
+              </div>
+              <div class="proof-pill">
+                <span class="proof-check">✓</span>
+                <span>Source-Transparent AI</span>
+              </div>
+              <div class="proof-pill">
+                <span class="proof-check">✓</span>
+                <span>Instant Active Recall</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Right Column: 3D Interactive Floating Demo Preview -->
+          <div class="hero-visual fade-in-up" style="--delay: 0.35s">
+            <div class="hero-card-3d-wrapper" id="hero-tilt-card">
+              
+              <!-- Levitating Badge: Next Best Action -->
+              <div class="floating-action-badge floating-element">
+                <div class="fab-kicker">NEXT BEST ACTION</div>
+                <div class="fab-title">Review 3 key concepts</div>
+                <div class="fab-glow"></div>
+              </div>
+
+              <!-- Main Glass Card Container -->
+              <div class="demo-card glass-panel">
+                <!-- Card Header -->
+                <div class="demo-card-header">
+                  <div>
+                    <div class="demo-overline">LIVE WORKSPACE PREVIEW</div>
+                    <div class="demo-doc-title">Digital systems · Chapter 04</div>
+                  </div>
+                  <div class="status-badge-ready">
+                    <span class="status-ping"></span>
+                    <span>READY</span>
+                  </div>
+                </div>
+
+                <!-- Card Body: Grid of Sub-modules -->
+                <div class="demo-grid">
+                  
+                  <!-- Sub-Card 1: Simple Summary -->
+                  <div class="demo-subcard subcard-summary" id="preview-summary-card">
+                    <div class="subcard-icon-row">
+                      <span class="subcard-icon emerald">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                          <line x1="16" y1="13" x2="8" y2="13"/>
+                          <line x1="16" y1="17" x2="8" y2="17"/>
+                          <line x1="10" y1="9" x2="8" y2="9"/>
+                        </svg>
+                      </span>
+                      <!-- Audio Listen Simulation Pill -->
+                      <button class="audio-listen-pill" id="demo-audio-btn" title="Simulate audio read-aloud">
+                        <span class="play-icon">▶</span>
+                        <span class="audio-bars">
+                          <span class="a-bar"></span>
+                          <span class="a-bar"></span>
+                          <span class="a-bar"></span>
+                        </span>
+                        <span>Listen</span>
+                      </button>
+                    </div>
+                    <h4 class="subcard-title">Simple summary</h4>
+                    <p class="subcard-text">
+                      Combinational logic circuits produce outputs that depend solely on present inputs, with zero internal memory states.
+                    </p>
+                    <div class="subcard-tag">3 Core Laws Highlighted</div>
+                  </div>
+
+                  <!-- Sub-Card 2: Practice Quiz with Progress Bar -->
+                  <div class="demo-subcard subcard-quiz" id="preview-quiz-card">
+                    <div class="subcard-icon-row">
+                      <span class="subcard-icon amber">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                        </svg>
+                      </span>
+                      <span class="quiz-streak-pill">🔥 4-Streak</span>
+                    </div>
+                    <h4 class="subcard-title">Practice quiz</h4>
+                    <div class="score-progress-wrap">
+                      <div class="score-progress-bar">
+                        <div class="score-progress-fill" style="width: 76%;"></div>
+                      </div>
+                    </div>
+                    <div class="score-meta-row">
+                      <span class="score-value"><strong id="demo-score-counter">76</strong>% recent score</span>
+                      <span class="score-accuracy">19/25 Mastered</span>
+                    </div>
+                    <button class="demo-quiz-trigger-link" onclick="openAuthPage('signup')">
+                      Take Quiz Now →
+                    </button>
+                  </div>
+
+                </div>
+
+                <!-- Sub-Card 3: AI Tutor Grounded Banner -->
+                <div class="demo-tutor-banner" id="preview-tutor-banner">
+                  <div class="tutor-avatar-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                  </div>
+                  <div class="tutor-banner-content">
+                    <div class="tutor-banner-header">
+                      <span class="tutor-name">AI Tutor</span>
+                      <span class="tutor-source-tag">Source: PDF Checked</span>
+                    </div>
+                    <p class="tutor-quote typing-text" id="tutor-hero-typing">
+                      "Grounded strictly in Chapter 04. Ask anything about truth tables or gate minimization."
+                    </p>
+                  </div>
+                  <button class="tutor-ask-btn" onclick="openAuthPage('signup')">
+                    Ask Tutor
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 2: A BETTER STUDY LOOP (FEATURES) -->
+      <section id="features" class="section-block">
+        <div class="section-header text-center">
+          <div class="section-eyebrow">A BETTER STUDY LOOP</div>
+          <h2 class="section-heading">Everything you need to move from upload to understanding.</h2>
+          <p class="section-subheading">
+            Stop passively skimming hundreds of lecture slides. Let intelligent agents dissect, structure, test, and guide your active recall.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          
+          <!-- Feature 1: AI Summaries -->
+          <div class="feature-card glass-panel tilt-card-feature" onclick="openAuthPage('signup')">
+            <div class="feature-icon-wrapper emerald-glow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2"/>
+                <path d="M9 14v1"/><path d="M9 19v2"/><path d="M9 3v2"/><path d="M9 9v1"/>
+                <path d="M15 14v1"/><path d="M15 19v2"/><path d="M15 3v2"/><path d="M15 9v1"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">AI summaries</h3>
+            <p class="feature-copy">
+              Turn dense study material into clear, exam-ready notes. Automatically extract core theorems, mnemonics, and executive highlights.
+            </p>
+            <div class="feature-interactive-bar">
+              <span class="feature-tag">Audio + Text</span>
+              <span class="feature-explore">Get started ↗</span>
+            </div>
+          </div>
+
+          <!-- Feature 2: Important Questions -->
+          <div class="feature-card glass-panel tilt-card-feature" onclick="openAuthPage('signup')">
+            <div class="feature-icon-wrapper amber-glow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Important questions</h3>
+            <p class="feature-copy">
+              Find the concepts most likely to matter before your next exam. Synthesize high-yield test scenarios with step-by-step marking rubrics.
+            </p>
+            <div class="feature-interactive-bar">
+              <span class="feature-tag">Exam Predictor</span>
+              <span class="feature-explore">Get started ↗</span>
+            </div>
+          </div>
+
+          <!-- Feature 3: Practice Quizzes -->
+          <div class="feature-card glass-panel tilt-card-feature" onclick="openAuthPage('signup')">
+            <div class="feature-icon-wrapper cyan-glow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                <path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Practice quizzes</h3>
+            <p class="feature-copy">
+              Build confidence with interactive MCQs and instant explanations. Track your retention curve and celebrate masteries with real-time feedback.
+            </p>
+            <div class="feature-interactive-bar">
+              <span class="feature-tag">Adaptive Recall</span>
+              <span class="feature-explore">Get started ↗</span>
+            </div>
+          </div>
+
+          <!-- Feature 4: Grounded AI Tutor -->
+          <div class="feature-card glass-panel tilt-card-feature" onclick="openAuthPage('signup')">
+            <div class="feature-icon-wrapper purple-glow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">AI tutor</h3>
+            <p class="feature-copy">
+              Ask questions and keep your answers strictly grounded in your upload. Toggle between strict "PDF Only" citation mode or expanded web context.
+            </p>
+            <div class="feature-interactive-bar">
+              <span class="feature-tag">Source Verified</span>
+              <span class="feature-explore">Get started ↗</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 3: HOW IT WORKS (ANIMATED 5-STEP ROADMAP) -->
+      <section id="how-it-works" class="section-block">
+        <div class="how-it-works-layout">
+          
+          <!-- Left Sticky Header -->
+          <div class="hiw-sticky-col">
+            <div class="section-eyebrow">HOW IT WORKS</div>
+            <h2 class="section-heading">Five small steps.<br /><span class="gradient-text-animated">A clearer semester.</span></h2>
+            <p class="hiw-description">
+              Your notes shouldn't gather digital dust. The system transforms any textbook excerpt, lecture handout, or slide deck into an active cognitive gymnasium in under 10 seconds.
+            </p>
+            <div class="hiw-stats-badge glass-panel">
+              <div class="hiw-stat-num">99.4%</div>
+              <div class="hiw-stat-label">Information grounding accuracy without hallucination</div>
+            </div>
+          </div>
+
+          <!-- Right Timeline Steps -->
+          <div class="hiw-timeline-col">
+            <div class="hiw-beam" id="timeline-beam"></div>
+
+            <!-- Step 1 -->
+            <div class="hiw-step-card glass-panel" data-step="1" onclick="openAuthPage('signup')">
+              <div class="step-num-badge">01</div>
+              <div class="step-content">
+                <h3 class="step-heading">Upload your study material</h3>
+                <p class="step-copy">Drop PDFs, lecture slides, scanned handouts, or plain text notes directly into your private workspace library.</p>
+              </div>
+              <div class="step-arrow">→</div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="hiw-step-card glass-panel" data-step="2" onclick="openAuthPage('signup')">
+              <div class="step-num-badge">02</div>
+              <div class="step-content">
+                <h3 class="step-heading">AI analyzes the content</h3>
+                <p class="step-copy">Semantic parsers index concepts, isolate formulas, and cross-reference prerequisite terms into an interactive knowledge map.</p>
+              </div>
+              <div class="step-arrow">→</div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="hiw-step-card glass-panel" data-step="3" onclick="openAuthPage('signup')">
+              <div class="step-num-badge">03</div>
+              <div class="step-content">
+                <h3 class="step-heading">Get your study pack</h3>
+                <p class="step-copy">Receive structured bullet points, executive summaries, analogy-based breakdowns, and predicted high-yield questions instantly.</p>
+              </div>
+              <div class="step-arrow">→</div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="hiw-step-card glass-panel" data-step="4" onclick="openAuthPage('signup')">
+              <div class="step-num-badge">04</div>
+              <div class="step-content">
+                <h3 class="step-heading">Practice with quizzes</h3>
+                <p class="step-copy">Reinforce memory retention using interactive MCQs featuring immediate rationale explanations for every correct and incorrect choice.</p>
+              </div>
+              <div class="step-arrow">→</div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="hiw-step-card glass-panel" data-step="5" onclick="openAuthPage('signup')">
+              <div class="step-num-badge">05</div>
+              <div class="step-content">
+                <h3 class="step-heading">Ask your grounded tutor</h3>
+                <p class="step-copy">Chat with an assistant that points to the exact chapter page before answering, ensuring zero hallucinations and trustworthy exam prep.</p>
+              </div>
+              <div class="step-arrow">→</div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: AUTHENTICATION PAGE (SIGN UP & LOG IN) -->
+    <!-- ============================================== -->
+    <section id="auth-section" class="auth-section" style="display: none;">
+      <div class="auth-grid">
+        
+        <!-- Left Column: Branding, Value Props & Quotes -->
+        <div class="auth-branding-col">
+          <button class="btn-back-home" onclick="showLandingView()">
+            ← Back to Home
+          </button>
+
+          <div class="auth-brand-badge">
+            <span class="brand-icon-box small">
+              <svg class="sparkle-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>
+              </svg>
+            </span>
+            <span class="auth-brand-title">AI Study Assistant</span>
+          </div>
+
+          <div class="auth-kicker">YOUR STUDY EDGE</div>
+          <h2 class="auth-quote-heading">Turn scattered notes into a plan you can trust.</h2>
+          <p class="auth-quote-desc">
+            Every summary, question, and quiz stays connected to the material you uploaded.
+          </p>
+
+          <!-- 3 Value Benefit Cards -->
+          <div class="auth-benefits-list">
+            <div class="auth-benefit-item glass-card">
+              <span class="benefit-icon">⚡</span>
+              <div>
+                <div class="benefit-title">Instant Study Packs</div>
+                <div class="benefit-desc">Condense 50-page lecture decks into exam-ready notes in 10 seconds.</div>
+              </div>
+            </div>
+
+            <div class="auth-benefit-item glass-card">
+              <span class="benefit-icon">🛡️</span>
+              <div>
+                <div class="benefit-title">Source Grounding</div>
+                <div class="benefit-desc">Every AI tutor answer cites the exact PDF page and chapter definition.</div>
+              </div>
+            </div>
+
+            <div class="auth-benefit-item glass-card">
+              <span class="benefit-icon">🎯</span>
+              <div>
+                <div class="benefit-title">Active Recall & Flashcards</div>
+                <div class="benefit-desc">Interactive quizzes and 3D flashcards engineered for long-term memory.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="auth-footer-tagline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 text-emerald">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+            <span>Upload. Understand. Practice. Learn.</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Glass Auth Form Card -->
+        <div class="auth-card-col">
+          <div class="auth-card glass-panel">
+            
+            <!-- Auth Mode Switcher Tabs -->
+            <div class="auth-tabs-toggle">
+              <button class="auth-tab-btn active" id="auth-tab-signup-btn" onclick="setAuthMode('signup')">
+                Create Account
+              </button>
+              <button class="auth-tab-btn" id="auth-tab-login-btn" onclick="setAuthMode('login')">
+                Log In
+              </button>
+            </div>
+
+            <!-- Instant Demo Quick-Access Banner -->
+            <div class="demo-quick-login-banner" onclick="handleDemoQuickLogin()">
+              <div class="dq-icon">⚡</div>
+              <div class="dq-content">
+                <div class="dq-title">1-Click Instant Demo Access</div>
+                <div class="dq-desc">Click here to log in as <strong>Alex Morgan</strong> and unlock workspace instantly</div>
+              </div>
+              <div class="dq-arrow">→</div>
+            </div>
+
+            <!-- Google Authentication Button -->
+            <button type="button" class="btn-google-auth" id="btn-google-auth" onclick="openGoogleAuthModal()">
+              <svg class="google-svg-icon" viewBox="0 0 24 24" width="20" height="20">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Continue with Google</span>
+            </button>
+
+            <!-- Auth Divider -->
+            <div class="auth-divider">
+              <span>or continue with email</span>
+            </div>
+
+            <!-- FORM 1: SIGN UP -->
+            <form id="signup-form" class="auth-form" onsubmit="handleSignupSubmit(event)">
+              <div class="form-group">
+                <label for="signup-name" class="form-label">Full name</label>
+                <div class="input-icon-wrap">
+                  <span class="input-icon">👤</span>
+                  <input type="text" id="signup-name" class="auth-input" placeholder="Alex Morgan" required value="Alex Morgan" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="signup-email" class="form-label">Email address</label>
+                <div class="input-icon-wrap">
+                  <span class="input-icon">✉️</span>
+                  <input type="email" id="signup-email" class="auth-input" placeholder="alex@university.edu" required value="alex@university.edu" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <label for="signup-password" class="form-label">Password</label>
+                  <span class="form-hint">8+ characters</span>
+                </div>
+                <div class="input-icon-wrap">
+                  <span class="input-icon">🔒</span>
+                  <input type="password" id="signup-password" class="auth-input" placeholder="••••••••" required value="studyhub2026" oninput="updatePasswordStrength(this.value)" />
+                </div>
+                <!-- Strength Bar -->
+                <div class="pwd-strength-bar">
+                  <div class="pwd-strength-fill" id="pwd-strength-fill" style="width: 80%;"></div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="signup-confirm" class="form-label">Confirm password</label>
+                <div class="input-icon-wrap">
+                  <span class="input-icon">🔒</span>
+                  <input type="password" id="signup-confirm" class="auth-input" placeholder="••••••••" required value="studyhub2026" />
+                </div>
+              </div>
+
+              <button type="submit" class="btn-primary-glow btn-lg w-full mt-2" id="btn-submit-signup">
+                <span id="btn-signup-label">Create your workspace</span>
+                <span class="spinner-inline" id="signup-spinner" style="display: none;"></span>
+              </button>
+
+              <div class="auth-switch-prompt">
+                Already have an account? <a href="javascript:void(0)" onclick="setAuthMode('login')">Log in</a>
+              </div>
+            </form>
+
+            <!-- FORM 2: LOG IN -->
+            <form id="login-form" class="auth-form" style="display: none;" onsubmit="handleLoginSubmit(event)">
+              <div class="form-group">
+                <label for="login-email" class="form-label">Email address</label>
+                <div class="input-icon-wrap">
+                  <span class="input-icon">✉️</span>
+                  <input type="email" id="login-email" class="auth-input" placeholder="alex@university.edu" required value="alex@university.edu" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <label for="login-password" class="form-label">Password</label>
+                  <span class="form-hint">8+ characters</span>
+                </div>
+                <div class="input-icon-wrap">
+                  <span class="input-icon">🔒</span>
+                  <input type="password" id="login-password" class="auth-input" placeholder="••••••••" required value="studyhub2026" />
+                </div>
+              </div>
+
+              <div class="form-row-remember">
+                <label class="remember-label">
+                  <input type="checkbox" checked class="remember-check" />
+                  <span>Remember this browser</span>
+                </label>
+              </div>
+
+              <button type="submit" class="btn-primary-glow btn-lg w-full mt-2" id="btn-submit-login">
+                <span id="btn-login-label">Open workspace</span>
+                <span class="spinner-inline" id="login-spinner" style="display: none;"></span>
+              </button>
+
+              <div class="auth-switch-prompt">
+                Don't have an account yet? <a href="javascript:void(0)" onclick="setAuthMode('signup')">Sign up</a>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 3: FULL INTERACTIVE WORKSPACE (UNLOCKED AFTER AUTH) -->
+    <!-- ============================================== -->
+    <section id="workspace" class="workspace-section" style="display: none;">
+      
+      <!-- Workspace Top Banner & Status -->
+      <div class="workspace-header-bar glass-panel">
+        <div class="ws-header-left">
+          <div class="ws-kicker">STUDENT WORKSPACE · TODAY</div>
+          <h2 class="ws-title" id="ws-welcome-heading">Welcome back, Alex.</h2>
+          <p class="ws-subtitle">Keep your next study session small, focused, and grounded.</p>
+        </div>
+
+        <div class="ws-header-right">
+          <!-- Document Selector Dropdown -->
+          <div class="doc-selector-wrapper">
+            <label for="doc-selector" class="doc-select-label">Active Pack:</label>
+            <select id="doc-selector" class="doc-select-dropdown">
+              <option value="adc-numericals" selected>📡 Analog & Digital Communication (ADC) · Numericals & Systems</option>
+              <option value="digital-systems">⚡ Digital Systems · Chapter 04</option>
+              <option value="neurobiology">🧠 Neuroscience · Synaptic Plasticity</option>
+              <option value="algorithms">💻 Algorithms · Dynamic Programming</option>
+            </select>
+          </div>
+
+          <!-- Delete Active Document Button -->
+          <button id="ws-delete-doc-btn" class="btn-danger-subtle btn-sm" onclick="confirmDeleteActiveDocument()" title="Delete active PDF from workspace">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+            <span>Delete PDF</span>
+          </button>
+
+          <!-- Upload Trigger Button -->
+          <button id="ws-upload-modal-btn" class="btn-primary-glow btn-sm" onclick="openUploadModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-4 h-4">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span>Upload Material</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Ribbon (All Clickable & Connected) -->
+      <div class="metrics-ribbon">
+        <div class="metric-card glass-panel" id="card-metric-docs" onclick="openLibraryModal()" title="View & manage all documents">
+          <div class="metric-icon emerald">📁</div>
+          <div>
+            <div class="metric-val" id="metric-docs-count">3</div>
+            <div class="metric-lbl">Total Documents</div>
+            <div class="metric-action-hint">View Library ↗</div>
+          </div>
+        </div>
+
+        <div class="metric-card glass-panel" id="card-metric-quiz" onclick="switchWorkspaceTab('quiz')" title="Take practice quiz">
+          <div class="metric-icon cyan">🎯</div>
+          <div>
+            <div class="metric-val" id="metric-quizzes-count">14</div>
+            <div class="metric-lbl">Quizzes Solved</div>
+            <div class="metric-action-hint">Practice Arena ↗</div>
+          </div>
+        </div>
+
+        <div class="metric-card glass-panel" id="card-metric-score" onclick="switchWorkspaceTab('progress')" title="View accuracy & score metrics">
+          <div class="metric-icon amber">🏆</div>
+          <div>
+            <div class="metric-val" id="metric-avg-score">84%</div>
+            <div class="metric-lbl">Average Score</div>
+            <div class="metric-action-hint">View Mastery ↗</div>
+          </div>
+        </div>
+
+        <div class="metric-card glass-panel" id="card-metric-streak" onclick="openStreakModal()" title="Check in daily streak">
+          <div class="metric-icon purple">🔥</div>
+          <div>
+            <div class="metric-val" id="metric-streak">5 Days</div>
+            <div class="metric-lbl">Active Streak</div>
+            <div class="metric-action-hint">Daily Check-in ↗</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Source Verification Banner (Faithful to emergent preview design) -->
+      <div class="source-banner glass-panel" id="source-mode-banner">
+        <div class="sb-left">
+          <span class="sb-sparkle-icon">✨</span>
+          <div>
+            <div class="sb-title">
+              Source Grounding: <strong id="source-mode-text" class="text-emerald">PDF Only</strong>
+            </div>
+            <div class="sb-desc">
+              The AI tutor checks your uploaded material first, every time, providing exact page references.
+            </div>
+          </div>
+        </div>
+        
+        <div class="sb-right">
+          <div class="toggle-pill-group">
+            <button class="toggle-pill active" id="btn-mode-pdf" onclick="setSourceMode('pdf_only')">
+              🛡️ PDF Only
+            </button>
+            <button class="toggle-pill" id="btn-mode-external" onclick="setSourceMode('pdf_plus_external')">
+              🌐 PDF + External Sources
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Workspace Card with 6 Animated Tabs -->
+      <div class="workspace-main-card glass-panel">
+        
+        <!-- Tab Navigation Bar -->
+        <div class="workspace-tabs-bar" role="tablist">
+          <button class="ws-tab-btn active" role="tab" id="tab-btn-summary" onclick="switchWorkspaceTab('summary')">
+            <span class="tab-icon">📄</span>
+            <span>Simple Summary</span>
+          </button>
+          
+          <button class="ws-tab-btn" role="tab" id="tab-btn-topics" onclick="switchWorkspaceTab('topics')">
+            <span class="tab-icon">💡</span>
+            <span>Key Topics & Explainer</span>
+          </button>
+          
+          <button class="ws-tab-btn" role="tab" id="tab-btn-questions" onclick="switchWorkspaceTab('questions')">
+            <span class="tab-icon">🎯</span>
+            <span>Important Questions</span>
+          </button>
+          
+          <button class="ws-tab-btn" role="tab" id="tab-btn-quiz" onclick="switchWorkspaceTab('quiz')">
+            <span class="tab-icon">🏆</span>
+            <span>Practice Quiz Arena</span>
+            <span class="tab-badge">Interactive</span>
+          </button>
+          
+          <button class="ws-tab-btn" role="tab" id="tab-btn-tutor" onclick="switchWorkspaceTab('tutor')">
+            <span class="tab-icon">🤖</span>
+            <span>AI Tutor Chat</span>
+            <span class="live-pulse-dot"></span>
+          </button>
+
+          <button class="ws-tab-btn" role="tab" id="tab-btn-progress" onclick="switchWorkspaceTab('progress')">
+            <span class="tab-icon">📊</span>
+            <span>Progress & Mastery</span>
+            <span class="tab-badge" id="tab-streak-badge">5d Streak</span>
+          </button>
+        </div>
+
+        <!-- ================= TAB CONTENT 1: SUMMARY ================= -->
+        <div class="tab-pane active" id="tab-pane-summary">
+          <div class="summary-tab-grid">
+            
+            <!-- Left Main Column: Executive Overview -->
+            <div class="summary-main-col glass-card">
+              <div class="summary-top-row">
+                <div>
+                  <span class="kicker-tag text-emerald">SYNTHESIS PACK READY</span>
+                  <h3 class="pane-headline" id="summary-doc-title">Combinational Logic & Boolean Foundations</h3>
+                  <div class="summary-doc-meta" id="summary-doc-meta">digital_systems_ch04.pdf · 28 Pages · Uploaded Today</div>
+                </div>
+
+                <!-- Action Tools -->
+                <div class="summary-tools">
+                  <button class="btn-icon-subtle" id="copy-summary-btn" title="Copy Summary Text">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                      <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                    </svg>
+                    <span>Copy</span>
+                  </button>
+                  
+                  <button class="btn-audio-player" id="summary-tts-btn" title="Read Aloud Summary">
+                    <span id="tts-icon">🔊</span>
+                    <span id="tts-label">Listen</span>
+                    <span class="audio-equalizer" id="summary-audio-eq">
+                      <span class="eq-b b1"></span>
+                      <span class="eq-b b2"></span>
+                      <span class="eq-b b3"></span>
+                      <span class="eq-b b4"></span>
+                    </span>
+                  </button>
+
+                  <button class="btn-icon-subtle text-red" id="summary-delete-btn" onclick="confirmDeleteActiveDocument()" title="Delete this PDF from Workspace">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    <span>Delete</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="summary-body-prose" id="summary-prose-content">
+                <p>
+                  <strong>Combinational logic</strong> represents the cornerstone of digital computing where the output state is strictly a mathematical function of current inputs, with zero dependence on previous clock cycles or internal storage registers.
+                </p>
+                <p>
+                  Unlike sequential circuits (such as flip-flops, registers, and counters), combinational systems obey pure Boolean equations. Fundamental circuits analyzed in this chapter include <em>half adders</em>, <em>full adders</em>, <em>multiplexers (MUX)</em>, <em>demultiplexers</em>, and <em>priority encoders</em>.
+                </p>
+                <p>
+                  Key minimization techniques like <strong>Karnaugh Mapping (K-maps)</strong> and the <strong>Quine-McCluskey tabular algorithm</strong> eliminate redundant silicon gates to minimize propagation delay (&tau;<sub>pd</sub>) and reduce dynamic switching power consumption.
+                </p>
+              </div>
+
+              <!-- High-Yield Takeaways Checklist -->
+              <div class="takeaways-box">
+                <h4 class="takeaways-title">⚡ High-Yield Key Takeaways (Exam Ready)</h4>
+                <div class="takeaways-list" id="summary-takeaways-list">
+                  <label class="takeaway-item">
+                    <input type="checkbox" checked class="takeaway-check" />
+                    <span><strong>No Memory Feedback:</strong> Output Y = f(X1, X2, ... Xn) strictly without latching elements.</span>
+                  </label>
+                  <label class="takeaway-item">
+                    <input type="checkbox" checked class="takeaway-check" />
+                    <span><strong>Universal Gates:</strong> Any arbitrary Boolean logic expression can be built exclusively with NAND or NOR gates.</span>
+                  </label>
+                  <label class="takeaway-item">
+                    <input type="checkbox" class="takeaway-check" />
+                    <span><strong>Propagation Delay & Hazards:</strong> Real semiconductor gate delays cause transient glitches (static-1 and static-0 hazards) resolvable via consensus terms.</span>
+                  </label>
+                  <label class="takeaway-item">
+                    <input type="checkbox" class="takeaway-check" />
+                    <span><strong>Multiplexer Completeness:</strong> A 2^n × 1 MUX can implement any n+1 variable Boolean function without additional gates.</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Sidebar: Quick Reference & Mnemonics -->
+            <div class="summary-sidebar-col">
+              <div class="glass-card mnemonic-card">
+                <div class="mnemonic-badge">MEMORY MNEMONIC</div>
+                <h4 class="mnemonic-title" id="summary-mnemonic-title">ADC Master Formulas</h4>
+                <p class="mnemonic-text" id="summary-mnemonic-text">
+                  <em>"Carrier holds 2/3 of power; FM bandwidth takes twice deviation plus message; Image mirrors at double IF."</em>
+                </p>
+                <div class="formula-box" id="summary-mnemonic-formula">
+                  P_t = P_c(1 + m²/2) &nbsp;|&nbsp; BW_{FM} = 2(Δf + f_m) &nbsp;|&nbsp; f_{img} = f_s + 2f_{IF}
+                </div>
+                <div class="mnemonic-note" id="summary-mnemonic-note">Essential MSBTE & University Examination Laws.</div>
+              </div>
+
+              <div class="glass-card jumpstart-card">
+                <h4 class="jumpstart-title">Ready for Active Recall?</h4>
+                <p class="jumpstart-text">Students who quiz themselves within 20 minutes of reading retain 3.2x more material on exam day.</p>
+                <button class="btn-primary-glow btn-sm w-full" id="summary-start-quiz-btn" onclick="switchWorkspaceTab('quiz')">
+                  Start Practice Quiz Arena →
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================= TAB CONTENT 2: TOPICS & EXPLAINER ================= -->
+        <div class="tab-pane" id="tab-pane-topics">
+          <div class="topics-layout">
+            
+            <!-- Topics Selector List -->
+            <div class="topics-nav-col glass-card">
+              <h4 class="topics-nav-heading">Select Concept to Deconstruct:</h4>
+              <div class="topics-list" id="topics-button-list">
+                <!-- Dynamically populated buttons -->
+              </div>
+            </div>
+
+            <!-- Dynamic Concept Deconstructor View -->
+            <div class="topics-content-col glass-card">
+              <div class="topic-header-flex">
+                <div>
+                  <span class="topic-sub-badge" id="topic-kicker">CORE THEOREM</span>
+                  <h3 class="topic-display-title" id="topic-title">Karnaugh Map Minimization (K-Maps)</h3>
+                </div>
+                <button class="btn-secondary-glow btn-sm" id="btn-explain-eli5" onclick="toggleEli5()">
+                  <span id="eli5-icon">🧒</span>
+                  <span id="eli5-label">Explain Like I'm 5</span>
+                </button>
+              </div>
+
+              <!-- Main Explanation Body -->
+              <div class="topic-explanation-card" id="topic-explanation-body">
+                <!-- Injected via app.js -->
+              </div>
+
+              <!-- Real World Analogy Box -->
+              <div class="analogy-card" id="topic-analogy-box">
+                <div class="analogy-badge">💡 INTUITIVE ANALOGY</div>
+                <div class="analogy-text" id="topic-analogy-text">
+                  <!-- Injected via app.js -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================= TAB CONTENT 3: QUESTIONS & FLASHCARDS ================= -->
+        <div class="tab-pane" id="tab-pane-questions">
+          <div class="questions-tab-header">
+            <div>
+              <span class="kicker-tag text-amber">EXAM PREDICTOR ALGORITHM</span>
+              <h3 class="pane-headline">High-Yield Exam Questions</h3>
+              <p class="pane-sub">Predicted based on textbook emphasis, recurring problem formats, and professor homework patterns.</p>
+            </div>
+            
+            <div class="view-mode-toggles">
+              <!-- AI Solver Model Selector -->
+              <div class="model-select-group">
+                <span class="text-xs text-muted">Solve with:</span>
+                <div class="model-pill-tabs">
+                  <button class="model-pill-btn active" id="solver-model-gemini-btn" onclick="setQuestionSolverModel('gemini')">
+                    <span class="m-icon">✨</span> Gemini 1.5 Pro
+                  </button>
+                  <button class="model-pill-btn" id="solver-model-chatgpt-btn" onclick="setQuestionSolverModel('chatgpt')">
+                    <span class="m-icon">🟢</span> ChatGPT-4o
+                  </button>
+                </div>
+              </div>
+
+              <div class="view-mode-subgroup">
+                <span class="text-xs text-muted">View:</span>
+                <button class="btn-toggle-view active" id="view-mode-accordion" onclick="setQuestionsMode('accordion')">
+                  📋 Rubric
+                </button>
+                <button class="btn-toggle-view" id="view-mode-flashcards" onclick="setQuestionsMode('flashcard')">
+                  🃏 Flashcards
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accordion View -->
+          <div class="questions-accordion-list" id="questions-accordion-container">
+            <!-- Dynamically injected questions -->
+          </div>
+
+          <!-- Flashcard View (Interactive 3D Flip) -->
+          <div class="flashcards-container" id="flashcards-container" style="display: none;">
+            <div class="flashcard-3d-scene">
+              <div class="flashcard-card" id="active-flashcard" onclick="flipActiveFlashcard()">
+                <!-- Front Side -->
+                <div class="flashcard-face flashcard-front">
+                  <div class="fc-header">
+                    <span class="fc-badge" id="fc-probability">HIGH YIELD · 98% PROBABILITY</span>
+                    <span class="fc-hint">Click Card to Flip 🔄</span>
+                  </div>
+                  <div class="fc-question-body" id="fc-question-text">
+                    What is the primary difference between a Half Adder and a Full Adder circuit, and how many inputs does each require?
+                  </div>
+                  <div class="fc-footer">Card <span id="fc-current-num">1</span> of <span id="fc-total-num">4</span></div>
+                </div>
+
+                <!-- Back Side -->
+                <div class="flashcard-face flashcard-back">
+                  <div class="fc-header">
+                    <span class="fc-badge emerald">MODEL EXAM ANSWER</span>
+                    <span class="fc-hint">Click Card to Flip 🔄</span>
+                  </div>
+                  <div class="fc-answer-body" id="fc-answer-text">
+                    A <strong>Half Adder</strong> computes the sum of two 1-bit binary inputs (A, B) producing Sum = A ⊕ B and Carry = A · B. It has no input for a carry from previous stages.<br /><br />
+                    A <strong>Full Adder</strong> takes three 1-bit inputs (A, B, and Carry-in $C_{in}$), allowing cascaded multi-bit addition.
+                  </div>
+                  <div class="fc-footer">Mastery: 100% Correct Rubric</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Flashcard Nav Controls -->
+            <div class="flashcard-controls">
+              <button class="btn-secondary-glow btn-sm" id="fc-prev-btn" onclick="prevFlashcard()">← Previous</button>
+              <button class="btn-primary-glow btn-sm" onclick="flipActiveFlashcard()">Flip Card (Spacebar)</button>
+              <button class="btn-secondary-glow btn-sm" id="fc-next-btn" onclick="nextFlashcard()">Next →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB CONTENT 4: PRACTICE QUIZ ARENA ================= -->
+        <div class="tab-pane" id="tab-pane-quiz">
+          <div class="quiz-arena-wrapper">
+            
+            <!-- Quiz Status Bar -->
+            <div class="quiz-top-bar glass-card">
+              <div class="quiz-progress-col">
+                <div class="quiz-q-counter">
+                  Question <strong id="quiz-current-index">1</strong> of <strong id="quiz-total-count">10</strong>
+                </div>
+                <div class="quiz-track-bar">
+                  <div class="quiz-track-fill" id="quiz-progress-fill" style="width: 10%;"></div>
+                </div>
+              </div>
+
+              <div class="quiz-stats-col">
+                <div class="quiz-score-pill">
+                  <span>Score:</span>
+                  <strong id="quiz-live-score" class="text-emerald">0</strong>
+                </div>
+                <button class="btn-icon-subtle" id="quiz-restart-btn" title="Restart Quiz" onclick="restartQuiz()">
+                  ↺ Restart
+                </button>
+              </div>
+            </div>
+
+            <!-- Active Question Card -->
+            <div class="quiz-card glass-card" id="quiz-active-card">
+              <div class="quiz-category-tag" id="quiz-q-category">DIGITAL SYSTEMS · CHAPTER 04</div>
+              <h3 class="quiz-question-title" id="quiz-q-text">
+                Which Boolean operation can be implemented using only two 2-input NAND gates?
+              </h3>
+
+              <!-- Options Grid -->
+              <div class="quiz-options-grid" id="quiz-options-container">
+                <!-- Dynamically injected options -->
+              </div>
+
+              <!-- Instant Feedback & Explanation Tray -->
+              <div class="quiz-feedback-tray" id="quiz-feedback-tray" style="display: none;">
+                <div class="feedback-badge" id="feedback-verdict-badge">CORRECT!</div>
+                <p class="feedback-rationale-text" id="feedback-rationale-text">
+                  Connecting both inputs of a NAND gate together creates an inverter (NOT). Cascading two NAND gates produces an AND function.
+                </p>
+                <div class="feedback-citation" id="feedback-citation-text">
+                  Source: Chapter 04, Section 2.3 · Page 89
+                </div>
+                <button class="btn-primary-glow btn-sm mt-3" id="quiz-next-q-btn" onclick="advanceQuizQuestion()">
+                  Next Question →
+                </button>
+              </div>
+            </div>
+
+            <!-- Quiz Results Modal (Shown on Completion) -->
+            <div class="quiz-result-view glass-card" id="quiz-results-view" style="display: none;">
+              <div class="trophy-sparkle-icon">🏆</div>
+              <h3 class="result-title">Practice Quiz Completed!</h3>
+              <p class="result-subtitle">Great active recall session. Consistent testing dramatically boosts memory retention.</p>
+              
+              <div class="result-score-circle">
+                <svg class="score-ring-svg" viewBox="0 0 120 120">
+                  <circle class="ring-bg" cx="60" cy="60" r="50"></circle>
+                  <circle class="ring-fill" id="result-ring-fill" cx="60" cy="60" r="50" style="stroke-dashoffset: 314;"></circle>
+                </svg>
+                <div class="ring-label-box">
+                  <div class="ring-percent" id="result-percentage-display">100%</div>
+                  <div class="ring-sub" id="result-fraction-display">4 / 4 Correct</div>
+                </div>
+              </div>
+
+              <div class="result-actions">
+                <button class="btn-primary-glow btn-md" onclick="restartQuiz()">
+                  Retake Quiz
+                </button>
+                <button class="btn-secondary-glow btn-md" onclick="switchWorkspaceTab('tutor')">
+                  Review Weak Points with Tutor
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================= TAB CONTENT 5: AI TUTOR CHAT ================= -->
+        <div class="tab-pane" id="tab-pane-tutor">
+          <div class="tutor-chat-wrapper glass-card">
+            
+            <!-- Tutor Header -->
+            <div class="tutor-chat-header">
+              <div class="tutor-header-profile">
+                <div class="tutor-live-avatar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a8 8 0 0 0-8 8v4a8 8 0 0 0 16 0v-4a8 8 0 0 0-8-8Z"/>
+                    <path d="M9 13h6"/>
+                    <circle cx="9" cy="9" r="1"/>
+                    <circle cx="15" cy="9" r="1"/>
+                  </svg>
+                  <span class="avatar-live-indicator"></span>
+                </div>
+                <div>
+                  <div class="tutor-header-name">Grounded AI Tutor</div>
+                  <div class="tutor-header-status">
+                    <span class="status-green-dot"></span> Active · Checking <span id="tutor-doc-name-ref">digital_systems_ch04.pdf</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tutor-header-actions">
+                <div class="tutor-model-badge-toggle">
+                  <span class="text-xs text-muted" style="margin-right: 4px;">Engine:</span>
+                  <button class="tutor-model-btn active" id="tutor-model-gemini" onclick="setTutorModel('gemini')">
+                    <span>✨ Gemini 1.5 Pro</span>
+                  </button>
+                  <button class="tutor-model-btn" id="tutor-model-chatgpt" onclick="setTutorModel('chatgpt')">
+                    <span>🟢 ChatGPT-4o</span>
+                  </button>
+                </div>
+                <button class="btn-icon-subtle" onclick="clearTutorChat()" title="Clear Chat History">
+                  🗑️ Clear
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Starter Prompt Pills -->
+            <div class="tutor-prompt-pills" id="tutor-quick-prompts">
+              <button class="prompt-chip" onclick="sendQuickPrompt('✨ Solve Numerical 1 (Wavelength Calculation) with Gemini showing step-by-step mathematical proof.')">
+                "✨ Solve Q1 with Gemini"
+              </button>
+              <button class="prompt-chip" onclick="sendQuickPrompt('🟢 Solve Numerical 6 (AM Power and Carrier Suppression) with ChatGPT reasoning.')">
+                "🟢 Solve Q6 with ChatGPT"
+              </button>
+              <button class="prompt-chip" onclick="sendQuickPrompt('Explain Carson\'s Rule formula for FM transmission bandwidth.')">
+                "Explain Carson's Rule"
+              </button>
+              <button class="prompt-chip" onclick="sendQuickPrompt('Calculate Image Frequency for fs = 1000 kHz and IF = 455 kHz step-by-step.')">
+                "Solve Image Frequency"
+              </button>
+            </div>
+
+            <!-- Messages Stream Container -->
+            <div class="tutor-messages-stream" id="tutor-messages-container">
+              <!-- Injected via app.js -->
+            </div>
+
+            <!-- Tutor Typing Indicator -->
+            <div class="tutor-typing-indicator" id="tutor-typing-dots" style="display: none;">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="typing-label">Tutor is analyzing chapter references...</span>
+            </div>
+
+            <!-- Input Box & Actions -->
+            <form class="tutor-input-bar" id="tutor-form" onsubmit="handleTutorSubmit(event)">
+              <input 
+                type="text" 
+                id="tutor-text-input" 
+                class="tutor-input-field" 
+                placeholder="Ask any question grounded in your document..." 
+                autocomplete="off" 
+              />
+              <button type="submit" class="btn-primary-glow btn-sm btn-send" id="tutor-send-btn">
+                <span>Send</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                  <line x1="22" y1="2" x2="11" y2="13"/>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+              </button>
+            </form>
+
+          </div>
+        </div>
+
+        <!-- ================= TAB CONTENT 6: PROGRESS TRACKING & MASTERY ================= -->
+        <div class="tab-pane" id="tab-pane-progress">
+          <div class="progress-tab-wrapper">
+            
+            <!-- SVG Gradient Definitions for Circular Rings -->
+            <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
+              <defs>
+                <linearGradient id="masteryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#10b981" />
+                  <stop offset="50%" stop-color="#06b6d4" />
+                  <stop offset="100%" stop-color="#3b82f6" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            <!-- Header Row: Mastery Gauge + 3 Quick Stats -->
+            <div class="progress-header-grid">
+              
+              <!-- Circular Mastery Ring Card -->
+              <div class="mastery-gauge-card glass-card">
+                <div class="mastery-gauge-ring">
+                  <svg viewBox="0 0 140 140">
+                    <circle class="gauge-bg" cx="70" cy="70" r="60"></circle>
+                    <circle class="gauge-fill" id="progress-mastery-circle" cx="70" cy="70" r="60" style="stroke-dashoffset: 60;"></circle>
+                  </svg>
+                  <div class="gauge-center-text">
+                    <div class="gauge-pct" id="progress-mastery-pct">84%</div>
+                    <div class="gauge-sub">Mastery</div>
+                  </div>
+                </div>
+                <div class="kicker-tag text-emerald" id="progress-rank-tag">ADVANCED SCHOLAR</div>
+                <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">Top 6% Active Cohort</div>
+              </div>
+
+              <!-- Quick Metrics 3-Pack -->
+              <div class="progress-quick-stats">
+                <div class="stat-metric-tile glass-card">
+                  <div class="stat-tile-top">
+                    <span class="stat-tile-title">Total Study Time</span>
+                    <span class="stat-tile-icon">⏱️</span>
+                  </div>
+                  <div class="stat-tile-value" id="progress-study-time">14h 30m</div>
+                  <div class="stat-tile-detail">
+                    <button class="btn-subtle-glow btn-xs" onclick="simulateStudySession(30)">+30m Study Session</button>
+                  </div>
+                </div>
+
+                <div class="stat-metric-tile glass-card">
+                  <div class="stat-tile-top">
+                    <span class="stat-tile-title">Quizzes Cleared</span>
+                    <span class="stat-tile-icon">🎯</span>
+                  </div>
+                  <div class="stat-tile-value" id="progress-quizzes-val">14 Solved</div>
+                  <div class="stat-tile-detail">
+                    <span>Avg Accuracy: <strong id="progress-avg-accuracy" class="text-emerald">84%</strong></span>
+                  </div>
+                </div>
+
+                <div class="stat-metric-tile glass-card">
+                  <div class="stat-tile-top">
+                    <span class="stat-tile-title">Active Streak</span>
+                    <span class="stat-tile-icon">🔥</span>
+                  </div>
+                  <div class="stat-tile-value" id="progress-streak-val">5 Days</div>
+                  <div class="stat-tile-detail">
+                    <button class="btn-subtle-glow btn-xs" onclick="openStreakModal()">Check In Today</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Heatmap Section: Daily 28-day Activity Grid -->
+            <div class="heatmap-card glass-card">
+              <div class="heatmap-card-header">
+                <div>
+                  <h3 class="pane-headline" style="margin-bottom: 2px;">Daily Study Consistency</h3>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">28-Day active recall and revision record</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button class="btn-secondary-glow btn-sm" onclick="claimDailyStreak()">🔥 Claim Today's Streak</button>
+                </div>
+              </div>
+
+              <div class="heatmap-grid-wrapper">
+                <div class="heatmap-cells-grid" id="heatmap-cells-container">
+                  <!-- Dynamically rendered 28 days -->
+                </div>
+              </div>
+
+              <div class="heatmap-legend">
+                <span>Less</span>
+                <span class="legend-swatch" style="background: rgba(255,255,255,0.05);"></span>
+                <span class="legend-swatch" style="background: rgba(52, 211, 153, 0.25);"></span>
+                <span class="legend-swatch" style="background: rgba(52, 211, 153, 0.5);"></span>
+                <span class="legend-swatch" style="background: rgba(52, 211, 153, 0.75);"></span>
+                <span class="legend-swatch" style="background: #34d399;"></span>
+                <span>More</span>
+              </div>
+            </div>
+
+            <!-- Split Section: Topic Mastery Breakdown vs Recent Quiz History -->
+            <div class="mastery-split-grid">
+              
+              <!-- Topic Breakdown -->
+              <div class="topic-mastery-card glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <h3 class="pane-headline" style="margin-bottom: 0;">Topic Mastery Breakdown</h3>
+                  <span class="kicker-tag text-emerald" id="topic-count-badge">7 TOPICS</span>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Dynamic retention score calculated via quiz accuracy & flashcard flips.</p>
+
+                <div class="topic-mastery-list" id="topic-mastery-container">
+                  <!-- Dynamically injected topic bars -->
+                </div>
+              </div>
+
+              <!-- Recent Quizzes & History -->
+              <div class="quiz-history-card glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <h3 class="pane-headline" style="margin-bottom: 0;">Recent Quiz History</h3>
+                  <button class="btn-primary-glow btn-xs" onclick="switchWorkspaceTab('quiz')">Take Quiz Arena ↗</button>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Verified recall scores from primary source documents.</p>
+
+                <div class="quiz-history-list" id="quiz-history-container">
+                  <!-- Dynamically injected quiz history items -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Achievements & Milestone Badges -->
+            <div class="achievements-card glass-card">
+              <h3 class="pane-headline">Unlocked Achievements</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Milestones reached during your grounded learning journey.</p>
+              
+              <div class="achievements-grid" id="achievements-grid-container">
+                <!-- Dynamically injected achievement cards -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 5: FOOTER -->
+    <!-- ============================================== -->
+    <footer class="footer-wrapper">
+      <div class="footer-content glass-card">
+        <div class="footer-brand-col">
+          <div class="footer-logo">
+            <span class="brand-icon-box small">
+              <svg class="sparkle-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>
+              </svg>
+            </span>
+            <span class="brand-title">AI Study Assistant</span>
+          </div>
+          <p class="footer-tagline">Upload. Understand. Practice. Learn.</p>
+        </div>
+
+        <div class="footer-center-col">
+          <div class="footer-note">Built for focused students who demand clarity and zero hallucinations.</div>
+        </div>
+
+        <div class="footer-meta-col">
+          <div class="footer-status-pill">
+            <span class="live-dot"></span> System Operational · Grounded Workspace
+          </div>
+          <div class="footer-copy">© 2026 AI Study Hub · Designed with Antigravity</div>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODAL 1: UPLOAD STUDY MATERIAL & PDF ANALYZER -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="upload-modal" style="display: none;">
+    <div class="modal-card glass-panel">
+      <div class="modal-header">
+        <div>
+          <span class="kicker-tag text-emerald">NEW STUDY PACK</span>
+          <h3 class="modal-title">Upload Study Material</h3>
+        </div>
+        <button class="modal-close-btn" onclick="closeUploadModal()" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Drag & Drop Area -->
+        <div class="drop-zone" id="drop-zone" onclick="triggerFileInput()">
+          <input type="file" id="file-input" class="hidden-input" accept=".pdf,.txt,.docx,.md" onchange="handleFileSelected(event)" />
+          <div class="drop-zone-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="drop-zone-title" id="drop-zone-label">Click to browse or drag & drop lecture PDF</div>
+          <div class="drop-zone-types">PDF, TXT, DOCX, or Markdown up to 50MB</div>
+          <div class="drop-selected-preview" id="drop-selected-preview" style="display: none;">
+            <div class="file-chip-left">
+              <span>📄</span>
+              <span id="preview-file-name">filename.pdf</span>
+              <span id="preview-file-size" style="color: var(--text-muted); font-size: 0.75rem;">(2.4 MB)</span>
+            </div>
+            <span class="text-emerald">✓ Ready</span>
+          </div>
+        </div>
+
+        <!-- Simulated Sample Upload Option -->
+        <div class="sample-upload-row">
+          <span>Or load an instant sample study pack:</span>
+          <div class="sample-pills">
+            <button class="sample-pill-btn" type="button" onclick="loadSampleDocument('adc-numericals')">📡 ADC Numericals Assignment (PDF)</button>
+            <button class="sample-pill-btn" type="button" onclick="loadSampleDocument('quantum-physics')">⚛️ Quantum Mechanics (PDF)</button>
+            <button class="sample-pill-btn" type="button" onclick="loadSampleDocument('cell-biology')">🧬 Molecular Genetics (PDF)</button>
+            <button class="sample-pill-btn" type="button" onclick="loadSampleDocument('deep-learning')">🤖 Deep Learning (PDF)</button>
+          </div>
+        </div>
+
+        <!-- Animated Parsing Progress (Hidden by default) -->
+        <div class="upload-progress-box" id="upload-progress-box" style="display: none;">
+          <div class="up-status-row">
+            <span id="up-status-label" class="up-label">Extracting chapter concepts...</span>
+            <span id="up-status-percent" class="up-percent text-emerald">0%</span>
+          </div>
+          <div class="up-track-bar">
+            <div class="up-fill-bar" id="up-fill-bar" style="width: 0%;"></div>
+          </div>
+          <div class="up-stages">
+            <span class="up-step" id="stage-1-label">✓ Document Ingestion</span>
+            <span class="up-step" id="stage-2-label">→ Synthesizing Topics & ELI5</span>
+            <span class="up-step" id="stage-3-label">→ Generating Grounded Quiz</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary-glow btn-sm" onclick="closeUploadModal()">Cancel</button>
+        <button class="btn-primary-glow btn-sm" id="btn-modal-analyze" onclick="handleAnalyzeClick()">
+          Analyze & Generate Pack
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 2: TOTAL DOCUMENTS LIBRARY MANAGER -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="library-modal" style="display: none;">
+    <div class="modal-card modal-lg glass-panel">
+      <div class="modal-header">
+        <div>
+          <span class="kicker-tag text-emerald">KNOWLEDGE REPOSITORY</span>
+          <h3 class="modal-title">Document Library & Study Packs</h3>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+            <span id="lib-total-count-lbl">3 Documents</span> available for instant active recall and AI tutoring.
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn-primary-glow btn-xs" onclick="closeLibraryModal(); openUploadModal();">
+            + Upload Material
+          </button>
+          <button class="modal-close-btn" onclick="closeLibraryModal()" aria-label="Close modal">✕</button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="doc-library-list" id="library-items-container">
+          <!-- Dynamically populated document items -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary-glow btn-sm" onclick="closeLibraryModal()">Close Library</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 3: ACTIVE STREAK & DAILY CHECK-IN -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="streak-modal" style="display: none;">
+    <div class="modal-card glass-panel" style="max-width: 480px;">
+      <div class="modal-header">
+        <div>
+          <span class="kicker-tag text-amber">NEURAL HABIT TRACKER</span>
+          <h3 class="modal-title">Learning Streak</h3>
+        </div>
+        <button class="modal-close-btn" onclick="closeStreakModal()" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="streak-modal-content">
+          <div class="streak-flame-hero">
+            <span class="streak-flame-icon">🔥</span>
+          </div>
+
+          <div class="streak-big-days" id="streak-modal-days">5 Days</div>
+          <div class="streak-subtext">You're on a roll! Daily study builds permanent synaptic plasticity.</div>
+
+          <!-- 7-Day Week Indicator -->
+          <div class="streak-calendar-row" id="streak-week-container">
+            <!-- Dynamically populated days -->
+          </div>
+
+          <div class="streak-perks-box">
+            <div>
+              <div style="font-weight: 700; color: #fff;">🛡️ Streak Freeze Active</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Protects against 1 missed day without breaking streak</div>
+            </div>
+            <span class="text-emerald" style="font-weight: 700;">1 Available</span>
+          </div>
+
+          <button class="btn-primary-glow btn-md w-100" id="btn-streak-checkin-modal" onclick="claimDailyStreak()">
+            🔥 Check In For Today (+50 XP)
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary-glow btn-sm" onclick="closeStreakModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 4: DELETE DOCUMENT CONFIRMATION -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="delete-doc-modal" style="display: none;">
+    <div class="modal-card glass-panel" style="max-width: 440px;">
+      <div class="modal-header">
+        <div>
+          <span class="kicker-tag text-rose" style="color: #f43f5e; border-color: rgba(244, 63, 94, 0.3);">REMOVE STUDY DOCUMENT</span>
+          <h3 class="modal-title">Delete Document?</h3>
+        </div>
+        <button class="modal-close-btn" onclick="closeDeleteModal()" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="delete-confirm-box">
+          <div class="delete-warn-icon" style="font-size: 2.2rem; margin-bottom: 12px; text-align: center;">🗑️</div>
+          <p style="color: #ffffff; font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; text-align: center;">
+            Remove "<span id="delete-modal-doc-title" class="text-emerald" style="color: #34d399;">...</span>"?
+          </p>
+          <p style="color: var(--text-muted); font-size: 0.82rem; line-height: 1.5; text-align: center;">
+            This will permanently remove this PDF study pack, including its summary, key topics & explainers, 8 exam numerical solutions, and practice quiz arena from your workspace.
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn-secondary-glow btn-sm" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn-danger-glow btn-sm" id="btn-confirm-delete" onclick="executeDeleteDocument()">
+          🗑️ Yes, Delete PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 5: GOOGLE AUTHENTICATION ACCOUNT PICKER -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="google-auth-modal" style="display: none;">
+    <div class="modal-card google-modal-card glass-panel" style="max-width: 460px;">
+      <div class="google-modal-top">
+        <svg class="google-modal-logo" viewBox="0 0 24 24" width="30" height="30">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <button class="modal-close-btn" onclick="closeGoogleAuthModal()" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="google-modal-header">
+        <h3 class="google-modal-heading">Sign in with Google</h3>
+        <p class="google-modal-sub">Choose an account to continue to <strong>AI Study Assistant</strong></p>
+      </div>
+
+      <div class="google-accounts-list" id="google-accounts-list">
+        <!-- Account 1: Fardin Niyaz -->
+        <button type="button" class="google-account-btn" onclick="signInWithSelectedGoogleAccount('Fardin Niyaz', 'fardin.niyaz@gmail.com', 'FN', '#4285F4')">
+          <div class="g-account-avatar" style="background: linear-gradient(135deg, #4285F4, #34A853);">FN</div>
+          <div class="g-account-details">
+            <div class="g-account-name">Fardin Niyaz</div>
+            <div class="g-account-email">fardin.niyaz@gmail.com</div>
+          </div>
+          <span class="g-account-arrow">→</span>
+        </button>
+
+        <!-- Account 2: Alex Morgan -->
+        <button type="button" class="google-account-btn" onclick="signInWithSelectedGoogleAccount('Alex Morgan', 'alex.morgan.student@gmail.com', 'AM', '#EA4335')">
+          <div class="g-account-avatar" style="background: linear-gradient(135deg, #EA4335, #FBBC05);">AM</div>
+          <div class="g-account-details">
+            <div class="g-account-name">Alex Morgan</div>
+            <div class="g-account-email">alex.morgan.student@gmail.com</div>
+          </div>
+          <span class="g-account-arrow">→</span>
+        </button>
+
+        <!-- Custom Account Entry -->
+        <div class="google-custom-entry-box">
+          <div class="google-custom-label">Or sign in with any Google email:</div>
+          <div class="google-custom-row">
+            <input type="email" id="google-custom-email-input" class="google-custom-input" placeholder="student@gmail.com" />
+            <button type="button" class="btn-primary-glow btn-xs" onclick="handleGoogleCustomSubmit()">Sign In</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Google Loading State -->
+      <div class="google-auth-loading" id="google-auth-loading" style="display: none;">
+        <div class="google-spinner"></div>
+        <div class="google-loading-text" id="google-loading-text">Verifying Google Identity token...</div>
+      </div>
+
+      <div class="google-modal-footer">
+        <span>To continue, Google will share your name, email address, and profile picture with AI Study Assistant.</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+
+  <!-- ============================================== -->
+  <!-- MOBILE BOTTOM APP DOCK (FOR PHONES & TABLETS)  -->
+  <!-- ============================================== -->
+  <nav class="mobile-bottom-dock" id="mobile-app-dock" aria-label="Mobile App Navigation">
+    <button class="dock-tab-btn active" id="dock-btn-home" onclick="handleDockNav('home')" aria-label="Home">
+      <div class="dock-icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <span class="dock-label">Home</span>
+    </button>
+
+    <button class="dock-tab-btn" id="dock-btn-workspace" onclick="handleDockNav('workspace')" aria-label="Workspace">
+      <div class="dock-icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+          <path d="M6 6h10"/>
+          <path d="M6 10h10"/>
+        </svg>
+      </div>
+      <span class="dock-label">Study</span>
+    </button>
+
+    <button class="dock-tab-btn" id="dock-btn-cards" onclick="handleDockNav('cards')" aria-label="Flashcards">
+      <div class="dock-icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="14" x="3" y="5" rx="2"/>
+          <path d="M7 15h10"/>
+          <path d="M7 11h6"/>
+        </svg>
+      </div>
+      <span class="dock-label">Cards</span>
+    </button>
+
+    <button class="dock-tab-btn" id="dock-btn-quiz" onclick="handleDockNav('quiz')" aria-label="Quiz">
+      <div class="dock-icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <span class="dock-label">Quiz</span>
+    </button>
+
+    <button class="dock-tab-btn" id="dock-btn-tutor" onclick="handleDockNav('tutor')" aria-label="AI Tutor">
+      <div class="dock-icon-box tutor-special">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+          <rect width="18" height="12" x="3" y="8" rx="2"/>
+          <circle cx="9" cy="14" r="1"/>
+          <circle cx="15" cy="14" r="1"/>
+        </svg>
+        <span class="dock-glow-pulse"></span>
+      </div>
+      <span class="dock-label">Tutor</span>
+    </button>
+  </nav>
+
+  <!-- ============================================== -->
+  <!-- INSTALL APP MODAL (FOR LAPTOP & MOBILE PHONES) -->
+  <!-- ============================================== -->
+  <div id="install-guide-modal" class="auth-modal-backdrop" style="display: none;" onclick="if(event.target === this) closeInstallGuideModal()">
+    <div class="install-modal-card glass-card" onclick="event.stopPropagation()">
+      <div class="install-modal-header">
+        <div class="install-modal-icon-badge">
+          <img src="icons/icon.svg" alt="AI Study Hub App Icon" class="install-badge-img" />
+          <div class="install-badge-glow"></div>
+        </div>
+        <div class="install-header-texts">
+          <h2 class="install-modal-title">Install AI Study Hub</h2>
+          <p class="install-modal-subtitle">Get the high-speed standalone app for your Laptop or Phone</p>
+        </div>
+        <button class="install-close-btn" onclick="closeInstallGuideModal()" aria-label="Close modal">&times;</button>
+      </div>
+
+      <!-- Platform Selection Tabs -->
+      <div class="install-platform-tabs">
+        <button class="platform-tab active" id="tab-btn-laptop" onclick="switchInstallTab('laptop')">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M2 20h20"/></svg>
+          <span>Laptop / PC</span>
+        </button>
+        <button class="platform-tab" id="tab-btn-android" onclick="switchInstallTab('android')">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          <span>Android Phone</span>
+        </button>
+        <button class="platform-tab" id="tab-btn-ios" onclick="switchInstallTab('ios')">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/></svg>
+          <span>iPhone / iPad</span>
+        </button>
+      </div>
+
+      <!-- Tab Content: Laptop -->
+      <div class="platform-pane active" id="pane-install-laptop">
+        <div class="install-steps-list">
+          <div class="install-step-item">
+            <div class="step-num-pill">Option 1</div>
+            <div class="step-desc">
+              <strong>Native Windows Laptop App (.exe / Electron)</strong>
+              <p>Run locally directly from your laptop without needing a browser window.</p>
+              <div class="quick-code-box">
+                <code>Double-click <strong>run_laptop_app.bat</strong> on your Desktop</code>
+              </div>
+            </div>
+          </div>
+          <div class="install-step-item">
+            <div class="step-num-pill">Option 2</div>
+            <div class="step-desc">
+              <strong>One-Click Browser Install (Chrome & Edge)</strong>
+              <p>Click the <strong>Install</strong> button in your browser address bar (look for the <span class="kbd-pill">?</span> or <span class="kbd-pill">?</span> icon on the top right) to install directly as a desktop shortcut.</p>
+            </div>
+          </div>
+        </div>
+        <div class="install-action-footer">
+          <button class="btn-primary-glow btn-md w-full" id="laptop-direct-install-btn" onclick="executeNativeInstallPrompt()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Install Desktop App Now</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Content: Android -->
+      <div class="platform-pane" id="pane-install-android">
+        <div class="install-steps-list">
+          <div class="install-step-item">
+            <div class="step-num-pill">1</div>
+            <div class="step-desc">
+              <strong>One-Tap Install</strong>
+              <p>Click the button below to prompt Android's native installation.</p>
+            </div>
+          </div>
+          <div class="install-step-item">
+            <div class="step-num-pill">2</div>
+            <div class="step-desc">
+              <strong>Or from Chrome Menu</strong>
+              <p>Tap the <strong>three dots (?)</strong> in Chrome and choose <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="install-action-footer">
+          <button class="btn-primary-glow btn-md w-full" onclick="executeNativeInstallPrompt()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Install on Android Phone</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Content: iOS (iPhone/iPad) -->
+      <div class="platform-pane" id="pane-install-ios">
+        <div class="install-steps-list">
+          <div class="install-step-item">
+            <div class="step-num-pill">1</div>
+            <div class="step-desc">
+              <strong>Open Safari</strong>
+              <p>Open this website in <strong>Safari</strong> on your iPhone or iPad.</p>
+            </div>
+          </div>
+          <div class="install-step-item">
+            <div class="step-num-pill">2</div>
+            <div class="step-desc">
+              <strong>Tap Share Button</strong>
+              <p>Tap the <strong>Share</strong> icon <span class="kbd-pill">??</span> at the bottom bar of Safari.</p>
+            </div>
+          </div>
+          <div class="install-step-item">
+            <div class="step-num-pill">3</div>
+            <div class="step-desc">
+              <strong>Add to Home Screen</strong>
+              <p>Scroll down and tap <strong>"Add to Home Screen" <span class="kbd-pill">?</span></strong>, then tap <strong>Add</strong>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="install-action-footer">
+          <button class="btn-secondary-glow btn-md w-full" onclick="closeInstallGuideModal()">
+            <span>Got It</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
